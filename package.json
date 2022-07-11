@@ -1,7 +1,7 @@
 {
   "name": "chatapp-api",
   "version": "1.0.0",
-  "description": "chatapp-api",
+  "description": "API service for the ChatApp",
   "main": "src/index.ts",
   "scripts": {
     "start": "(set NODE_ENV=production) && node dist/index.js",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/jrequizo/chatapp-api.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": ""
+    "url": "https://github.com/jrequizo/chatapp-api.git/issues"
   },
-  "homepage": "",
+  "homepage": "https://github.com/jrequizo/chatapp-api.git#readme",
   "devDependencies": {
     "@types/cors": "^2.8.12",
     "@types/deasync": "^0.1.2",
