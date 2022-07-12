@@ -56,11 +56,11 @@ async function createAccount(email: string, username: string, password: string) 
 		username: username
 	})
 
-	const json = {uid: userCredentials.user.uid, username: username}
-	
+	const json = { uid: userCredentials.user.uid, username: username }
+
 	// Temporary in-app event-driven communication.
 	event.emit('profile-created', json)
-	
+
 	/**
 	 * Pubsub Topic that is messaged when a new User is created.
 	 * Relevant API's create a subscription to this topic and perform actions when notified.
@@ -70,13 +70,19 @@ async function createAccount(email: string, username: string, password: string) 
 	// Push a new message to Google PubSub `profile-create` Topic.
 	// await topic.publishMessage({json})
 
-	// User jwt
-	const token = await userCredentials.user.getIdToken()
+	/**
+	 * User credentials.
+	 * This should always return the same shape as the `login` route.
+	 */ 
+	let jwt = await userCredentials.user.getIdToken()
+	let refreshToken = userCredentials.user.refreshToken
+	let uid = userCredentials.user.uid
 
 	return {
-		user: userCredentials.user,
-		jwt: token,
-		refreshToken: userCredentials.user.refreshToken
+		jwt: jwt,
+		refreshToken: refreshToken,
+		user: JSON.stringify(userCredentials.user),
+		uid: uid
 	}
 }
 
@@ -92,29 +98,29 @@ const passwordRegex = RegExp('(?=.*[a-z].*)(?=.*[A-Z].*)(.*\\d.*)')
  * 	Route to create a new User from an `email`, `username`, and `password.
  */
 export const router = trpc.router()
-.mutation("register", {
-	input: z.object({
-		email: z.string().email(),
-		username: z.string(),
-		password: z.string({
-			invalid_type_error: "Password must contain a lowercase, uppercase, and a number. Password must be between 8 and 100 characters long."
-		}).min(8).max(100).regex(passwordRegex) 
-	}),
-	async resolve({ input }) {
-		// Validate the provided `username` and `email` are not in use.
-		const [_usernameTaken, _emailTaken] = await Promise.all([usernameTaken(input.username), emailTaken(input.email)])
+	.mutation("register", {
+		input: z.object({
+			email: z.string().email(),
+			username: z.string(),
+			password: z.string({
+				invalid_type_error: "Password must contain a lowercase, uppercase, and a number. Password must be between 8 and 100 characters long."
+			}).min(8).max(100).regex(passwordRegex)
+		}),
+		async resolve({ input }) {
+			// Validate the provided `username` and `email` are not in use.
+			const [_usernameTaken, _emailTaken] = await Promise.all([usernameTaken(input.username), emailTaken(input.email)])
 
-		if (!_usernameTaken && !_emailTaken) {
-			return await createAccount(input.email, input.username, input.password);
-		} else {
-			// If the username and email are taken, reject the request.
-			const emailError = _emailTaken ? "{email} " : ""
-			const usernameError = _usernameTaken ? "{username}" : ""
+			if (!_usernameTaken && !_emailTaken) {
+				return await createAccount(input.email, input.username, input.password);
+			} else {
+				// If the username and email are taken, reject the request.
+				const emailError = _emailTaken ? "{email} " : ""
+				const usernameError = _usernameTaken ? "{username}" : ""
 
-			throw new trpc.TRPCError({
-				message: `Credentials in use: ${emailError}${usernameError}`,
-				code: "CONFLICT"
-			})
+				throw new trpc.TRPCError({
+					message: `Credentials in use: ${emailError}${usernameError}`,
+					code: "CONFLICT"
+				})
+			}
 		}
-	}
-})
+	})
