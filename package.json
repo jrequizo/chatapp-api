@@ -6,7 +6,8 @@
   "scripts": {
     "start": "(set NODE_ENV=production) && node dist/index.js",
     "start:dev": "(set NODE_ENV=development) && ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/index.ts",
-    "gcp-build": "tsc -p ."
+    "gcp-build": "tsc -p . && resolve-tspaths",
+    "gcp-deploy": "gcloud run deploy api --source ."
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
     "@types/express": "^4.17.13",
     "@types/firebase": "^3.2.1",
     "@types/node": "^17.0.33",
+    "resolve-tspaths": "^0.7.0",
     "ts-node": "^10.7.0",
     "ts-node-dev": "^2.0.0",
     "tsconfig-paths": "^4.0.0",
