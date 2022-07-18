@@ -14,6 +14,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
 
+        - name: Checkout repository
+          uses: actions/checkout@v2
+
         - id: 'auth'
           uses: 'google-github-actions/auth@v0'
           with:
@@ -21,9 +24,6 @@ jobs:
 
         - name: 'Set up Cloud SDK'
           uses: 'google-github-actions/setup-gcloud@v0'
-
-        - name: Checkout repository
-          uses: actions/checkout@v2
 
         - name: Deploy Docker image
           run: gcloud run deploy ${{ secrets.GCP_APP_NAME }} --source . --region australia-southeast2
