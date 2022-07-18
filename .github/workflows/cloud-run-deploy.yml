@@ -19,9 +19,6 @@ jobs:
           with:
             credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-        - name: Configure Docker
-          run: gcloud auth configure-docker --quiet
-
         - name: Checkout repository
           uses: actions/checkout@v2
 
