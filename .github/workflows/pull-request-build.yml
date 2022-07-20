@@ -21,7 +21,8 @@ jobs:
         - name: 'Set up Cloud SDK'
           uses: 'google-github-actions/setup-gcloud@v0'
 
-        - run: printf '${{ secrets.GCP_CREDENTIALS }}' >> src/key.json
+        - name: 'Output default GCP credentials to file'
+          run: printf '${{ secrets.GCP_CREDENTIALS }}' >> key.json
 
         - name: Build Docker image
           run: docker build . -t ${{ secrets.GCP_APP_NAME }}
