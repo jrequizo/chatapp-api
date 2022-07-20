@@ -1,7 +1,9 @@
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 
-const client = new SecretManagerServiceClient()
 const projectId = process.env.GOOGLE_CLOUD_PROJECT || process.env.LOCAL_GOOGLE_CLOUD_PROJECT
+const client = new SecretManagerServiceClient({
+	projectId: projectId
+})
 
 /**
  * 
@@ -23,8 +25,8 @@ async function getSecret(secretName: string) {
 		} else {
 			throw new ReferenceError("projectId is undefined")
 		}
-	} catch ({ errorMessage })  {
-		console.log(`SecretManager: ${errorMessage}`)
+	} catch (error)  {
+		console.log(`SecretManager: ${error}`)
 	}
 
 	return undefined

@@ -7,10 +7,8 @@ on:
     branches: [ master ]
 
 jobs:
-
     deploy:
-
-        name: Setup Gcloud Account
+        name: Deploy to Cloud Run
         runs-on: ubuntu-latest
         steps:
 
@@ -25,5 +23,16 @@ jobs:
         - name: 'Set up Cloud SDK'
           uses: 'google-github-actions/setup-gcloud@v0'
 
+        - run: printf '${{ secrets.GCP_CREDENTIALS }}' >> src/key.json
+
+        - name: Build Docker image
+          run: docker build . -t ${{ secrets.GCP_APP_NAME }}
+
+        - name: Test Docker image
+          run: docker run --name ${{ secrets.GCP_APP_NAME }} -e GOOGLE_APPLICATION_CREDENTIALS='key.json' -it ${{ secrets.GCP_APP_NAME }} sh -c "go test -v"
+
+        - name: Push Docker image
+          run: docker push ${{ secrets.GCP_APP_NAME }}
+
         - name: Deploy Docker image
-          run: gcloud run deploy ${{ secrets.GCP_APP_NAME }} --source . --region australia-southeast2
+          run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image ${{ secrets.GCP_APP_NAME }} . --region australia-southeast2 --platform managed
