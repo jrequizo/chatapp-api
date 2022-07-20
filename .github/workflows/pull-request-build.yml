@@ -1,4 +1,4 @@
-name: Deploy to Cloud Run on Merge
+name: Test build
 
 on:
   pull_request:
@@ -28,4 +28,4 @@ jobs:
           run: docker build . -t ${{ secrets.GCP_APP_NAME }}
 
         - name: Test Docker image
-          run: docker run ${{ secrets.GCP_APP_NAME }} -e GOOGLE_APPLICATION_CREDENTIALS='/app/key.json' --mount 'type=bind,source=/key.json,target=/app/key.json' sh -c "go test -v"
+          run: docker run ${{ secrets.GCP_APP_NAME }} -e GOOGLE_APPLICATION_CREDENTIALS='/app/key.json' --mount 'type=bind,source=${pwd}/key.json,target=/app/key.json' sh -c "go test -v"
