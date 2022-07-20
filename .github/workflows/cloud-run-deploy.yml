@@ -22,7 +22,10 @@ jobs:
           uses: 'google-github-actions/setup-gcloud@v0'
 
         - name: 'Output default GCP credentials to file'
-          run: 'echo "${{ secrets.GCP_CREDENTIALS }}" > key.json'
+          run: 'echo "$key" > key.json'
+          shell: bash
+          env:
+            key: ${{ secrets.GCP_CREDENTIALS }}
 
         - name: Build Docker image
           run: docker build . -t ${{ secrets.GCP_APP_NAME }}
