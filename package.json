@@ -4,7 +4,7 @@
   "description": "API service for the ChatApp",
   "main": "src/index.ts",
   "scripts": {
-    "start": "(set NODE_ENV=production) && node dist/index.js",
+    "start": "node dist/index.js",
     "start:dev": "(set NODE_ENV=development) && ts-node-dev -r tsconfig-paths/register --respawn --transpile-only src/index.ts",
     "gcp-build": "tsc -p . && resolve-tspaths",
     "gcp-deploy": "gcloud run deploy api --source ."
