@@ -53,9 +53,23 @@ app.use(
 	})
 )
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
 	console.log(`tRPC API: Server listening on port ${PORT}`)
 });
+
+/**
+ * Automatically shut down the server if we are running a build test fire after the server has instantiated.
+ * TODO: Run some health checks on an endpoint to make sure ports are exposed properly?
+ * TODO: Run unit tests on the functions in /router
+ */
+server.on('listening', () => {
+	if (process.env.NODE_ENV === "buildtest") {
+		server.close(() => {
+			console.log(`Process ran successfully`)
+			process.exit(0);
+		})
+	}
+})
 
 /**
  * 	Expose the API interface to the Client application for intellisense and strong typing.

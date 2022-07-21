@@ -1,12 +1,12 @@
-name: Deploy to Cloud Run on Merge
+name: Test build
 
 on:
-  push:
+  pull_request:
     branches: [ master ]
 
 jobs:
     deploy:
-        name: Deploy to Cloud Run
+        name: Build Docker image and test container
         runs-on: ubuntu-latest
         steps:
 
@@ -32,9 +32,3 @@ jobs:
 
         - name: Test Docker image
           run: docker run -e NODE_ENV=buildtest ${{ secrets.GCP_APP_NAME }} 
-
-        - name: Push Docker image
-          run: docker push ${{ secrets.GCP_APP_NAME }}
-
-        - name: Deploy Docker image
-          run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image ${{ secrets.GCP_APP_NAME }} --set-env-vars "^@^NODE_ENV=production" --region australia-southeast2 --platform managed
