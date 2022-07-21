@@ -28,7 +28,7 @@ jobs:
             key: ${{ secrets.GCP_CREDENTIALS }}
 
         - name: Build Docker image
-          run: docker build . -t ${{ secrets.GCP_APP_NAME }}
+          run: docker build . -t buildtest
 
         - name: Test Docker image
-          run: docker run -e NODE_ENV=buildtest ${{ secrets.GCP_APP_NAME }} 
+          run: docker run -e NODE_ENV=buildtest buildtest
