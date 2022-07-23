@@ -42,4 +42,4 @@ jobs:
           run: docker push $IMAGE_NAME
 
         - name: Deploy Docker image
-          run: gcloud run deploy ${{ secrets.GCP_APP_NAME }} --image $IMAGE_NAME --set-env-vars "^@^NODE_ENV=production" --region australia-southeast2 --allow-unauthenticated --platform managed --min-instances=1 --use-http2
+          run: gcloud run deploy ${{ secrets.GCP_APP_NAME }} --image $IMAGE_NAME --set-env-vars "^@^NODE_ENV=production" --region australia-southeast2 --allow-unauthenticated --platform managed --min-instances=1
