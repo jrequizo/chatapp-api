@@ -37,7 +37,7 @@ export async function onProfileCreated(message: Message) {
 		uid: accountData.uid,
 		username: accountData.username,
 		about: "",
-		pfp_url: "https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg" // TOOD: add URL to a generated CDN URL specifically assigned to the User's profile picture.
+		pfp_url: "https://storage.googleapis.com/chatapp-profile/pfp/default.png"
 	})
 }
 
@@ -51,6 +51,6 @@ export async function onProfileCreated(message: Message) {
 		uid: data.uid,
 		username: data.username,
 		about: "",
-		pfp_url: "https://t4.ftcdn.net/jpg/00/64/67/63/360_F_64676383_LdbmhiNM6Ypzb3FM4PPuFP9rHe7ri8Ju.jpg" // TOOD: add URL to a generated CDN URL specifically assigned to the User's profile picture.
+		pfp_url: "https://storage.googleapis.com/chatapp-profile/pfp/default.png"
 	})
 }

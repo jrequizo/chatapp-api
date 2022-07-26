@@ -1,4 +1,4 @@
-import { createContextRouter } from "../utils/trpc/createContextRouter"
+import { createContextRouter } from "../../utils/trpc/createContextRouter"
 
 import { accountRouter } from './account/accountRouter'
 import { authRouter } from './auth/authRouter'
@@ -11,7 +11,7 @@ import { userSearchRouter } from './user-search/userSearchRouter'
 /**
  * 	Merging the routers into a single instance. 
  */
-export const router = createContextRouter()
+export const trpcRouter = createContextRouter()
 .merge('account.', accountRouter)
 .merge('auth.', authRouter)
 .merge('chat.', chatRouter)
