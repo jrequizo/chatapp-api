@@ -1,4 +1,4 @@
-import { createContextRouter } from '../../utils/trpc/createContextRouter'
+import { createContextRouter } from '../../../utils/trpc/createContextRouter'
 
 import { router as aboutRouter } from './about/about'
 import { router as profileDataRouter } from './profileData/profileData'

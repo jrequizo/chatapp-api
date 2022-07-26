@@ -33,7 +33,8 @@ initFirebase()
  * they rely on the Firebase clients and/or PubSub Topics/Subscriptions.
  */
 import { createContext, createContextRouter } from './utils/trpc/createContextRouter'
-import { router } from './router/appRouter'
+import { trpcRouter } from './routers/trpc/trpcRouter'
+import expressRouter from './routers/express/expressRouter'
 
 /**
  * 	Express and tRPC Setup.
@@ -41,7 +42,7 @@ import { router } from './router/appRouter'
  */
 const PORT = process.env.PORT || 3001
 
-const appRouter = createContextRouter().merge(router)
+const appRouter = createContextRouter().merge(trpcRouter)
 const app = express()
 app.use(cors())
 
@@ -52,6 +53,8 @@ app.use(
 		createContext: createContext,
 	})
 )
+
+app.use(expressRouter)
 
 const server = app.listen(PORT, () => {
 	console.log(`tRPC API: Server listening on port ${PORT}`)

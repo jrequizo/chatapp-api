@@ -1,4 +1,4 @@
-import { createContextRouter } from '../../utils/trpc/createContextRouter'
+import { createContextRouter } from '../../../utils/trpc/createContextRouter'
 
 import { router as loginRouter } from "./login/login"
 import { router as logoutRouter } from "./logout/logout"

@@ -2,7 +2,7 @@ import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 import { fAdminApp } from '@/utils/gcloud/firebase'
-import { createContextRouter } from '../../../utils/trpc/createContextRouter'
+import { createContextRouter } from '../../../../utils/trpc/createContextRouter'
 
 const profilesRef = fAdminApp.firestore().collection("profiles")
 

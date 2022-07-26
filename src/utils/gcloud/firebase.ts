@@ -39,7 +39,8 @@ async function _initFirebase() {
 				credential: fAdminApp.credential.cert({
 					...secret
 				}),
-				databaseURL: process.env.FIREBASE_DATABASE_URL
+				databaseURL: process.env.FIREBASE_DATABASE_URL,
+				storageBucket: process.env.FIREBASE_BUCKET_URL
 			})
 		} else {
 			throw new ReferenceError("secretString is undefined")

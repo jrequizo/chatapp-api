@@ -1,4 +1,4 @@
-import { createContextRouter } from '../../utils/trpc/createContextRouter'
+import { createContextRouter } from '../../../utils/trpc/createContextRouter'
 
 import { router as chatHistory } from './chat-history/chatHistory'
 
