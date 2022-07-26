@@ -37,7 +37,7 @@ export async function onProfileCreated(message: Message) {
 		uid: accountData.uid,
 		username: accountData.username,
 		about: "",
-		pfp_url: "https://storage.googleapis.com/chatapp-profile/pfp/default.png"
+		pfp_url: ""
 	})
 }
 
@@ -51,6 +51,6 @@ export async function onProfileCreated(message: Message) {
 		uid: data.uid,
 		username: data.username,
 		about: "",
-		pfp_url: "https://storage.googleapis.com/chatapp-profile/pfp/default.png"
+		pfp_url: ""
 	})
 }
