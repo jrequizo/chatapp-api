@@ -4,6 +4,8 @@ import { getStorage } from "firebase-admin/storage";
 
 import crypto from 'crypto'
 
+import sharp from 'sharp'
+
 import { fAdminApp } from '@/utils/gcloud/firebase';
 
 const profilesRef = fAdminApp.firestore().collection("profiles")
@@ -39,24 +41,46 @@ export const handler = async (req: Request, res: Response) => {
 	const url = crypto.createHash('md5').update(uid.toString()).digest('hex')
 
 	// Create file in bucket
-	const file = bucket.file(`pfp/${url}.png`)
+	const fileLarge = bucket.file(`pfp/${url}-large.png`)
+	const fileSmall = bucket.file(`pfp/${url}-small.png`)
+
+	const [largeResized, smallResized] = await Promise.resolve([
+		await sharp(buffer).resize({
+			width: 2526,
+			height: 256,
+			fit: 'inside'
+		}).toBuffer(),
+		await sharp(buffer).resize({
+			width: 48,
+			height: 48,
+			fit: 'inside'
+		}).toBuffer()
+	])
 
 	// Upload file
-	await file.save(buffer)
+	await Promise.resolve([
+		await fileLarge.save(largeResized),
+		await fileSmall.save(smallResized),
+	])
 
-	await file.makePublic()
+	let bucketUrl = fileLarge.publicUrl();
+	bucketUrl = bucketUrl.slice(0, bucketUrl.length - 10);
 
-	const bucketUrl = file.publicUrl()
+	await Promise.resolve([
+		await fileLarge.makePublic(),
+		await fileSmall.makePublic(),
 
-	// Update entry in Firestore
-	await profilesRef.doc(uid).set(
-		{
-			pfp_url: bucketUrl
-		},
-		{
-			merge: true
-		}
-	)
+		// Update entry in Firestore
+		await profilesRef.doc(uid).set(
+			{
+				pfp_url: bucketUrl
+			},
+			{
+				merge: true
+			}
+		)
+	])
+
 
 	return res.status(201).end()
 }
