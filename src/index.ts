@@ -34,7 +34,7 @@ initFirebase()
  */
 import { createContext, createContextRouter } from './utils/trpc/createContextRouter'
 import { trpcRouter } from './routers/trpc/trpcRouter'
-import expressRouter from './routers/express/expressRouter'
+import { expressRouter } from './routers/express/expressRouter'
 
 /**
  * 	Express and tRPC Setup.
@@ -46,15 +46,17 @@ const appRouter = createContextRouter().merge(trpcRouter)
 const app = express()
 app.use(cors())
 
-app.use(
+const routes = express.Router()
+routes.use(
 	"/trpc",
 	trpcExpress.createExpressMiddleware({
 		router: appRouter,
 		createContext: createContext,
 	})
 )
+routes.use("/express", expressRouter)
 
-app.use("/api", expressRouter)
+app.use("/api", routes)
 
 const server = app.listen(PORT, () => {
 	console.log(`tRPC API: Server listening on port ${PORT}`)
