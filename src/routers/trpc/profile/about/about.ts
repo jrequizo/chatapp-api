@@ -12,16 +12,15 @@ const profilesRef = fAdminApp.firestore().collection("profiles")
 export const router = createContextRouter()
 .mutation("about", {
 	input: z.object({
-		jwt: z.string(),
-		about: z.number().optional().default(10)
+		about: z.string()
 	}),
 	async resolve({ input, ctx }) {
 		if (ctx.decodedToken) {
 			await profilesRef.doc(ctx.decodedToken.uid).set({
 				about: input.about,
+			},{
+				merge: true
 			})
-
-			return
 		} else {
 			throw new TRPCError({ code: 'UNAUTHORIZED' });
 		}

@@ -10,9 +10,13 @@ export async function createContext({
 	// Will be available as `ctx` in all your resolvers
 	async function getJwtFromHeader() {
 		if (req.headers.authorization) {
-			const token = req.headers.authorization.split(' ')[1]
-			const decodedToken = await fAdminApp.auth().verifyIdToken(token)
-			return decodedToken;
+			try {
+				const token = req.headers.authorization.split(' ')[1]
+				const decodedToken = await fAdminApp.auth().verifyIdToken(token)
+				return decodedToken;
+			} catch (error) {
+				return null;
+			}
 		}
 		return null;
 	}
