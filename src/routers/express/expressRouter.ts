@@ -2,8 +2,10 @@ import express from 'express'
 
 import profileRouter from './profile/router'
 
-const router = express.Router()
+const expressRouter = express.Router()
 
-router.use('/profile', profileRouter)
+expressRouter.use('/profile', profileRouter)
 
-export default router;
+export {
+	expressRouter
+};
