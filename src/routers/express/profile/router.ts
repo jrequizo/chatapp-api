@@ -6,6 +6,6 @@ import { handler as pfpUploadHandler } from './pfp-upload/pfp-upload'
 const upload = multer();
 const router = express.Router();
 
-router.post('/:uid/upload', upload.single('pfp'), pfpUploadHandler);
+router.post('/upload', upload.single('pfp'), pfpUploadHandler);
 
 export default router;

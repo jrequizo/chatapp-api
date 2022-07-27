@@ -68,7 +68,7 @@ const server = app.listen(PORT, () => {
  * TODO: Run unit tests on the functions in /router
  */
 server.on('listening', () => {
-	if (process.env.NODE_ENV === "buildtest") {
+	if (process.env.NODE_ENV === "test") {
 		server.close(() => {
 			console.log(`Process ran successfully`)
 			process.exit(0);
