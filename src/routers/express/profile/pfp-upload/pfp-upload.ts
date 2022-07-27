@@ -14,7 +14,7 @@ const storage = getStorage();
 const bucket = storage.bucket('chatapp-profile');
 
 interface MulterRequest extends Request {
-    file: Express.Multer.File;
+    file: any;
 }
 
 export const handler = async (req: MulterRequest, res: Response) => {
