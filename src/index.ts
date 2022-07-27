@@ -54,7 +54,7 @@ app.use(
 	})
 )
 
-app.use(expressRouter)
+app.use("/api", expressRouter)
 
 const server = app.listen(PORT, () => {
 	console.log(`tRPC API: Server listening on port ${PORT}`)
