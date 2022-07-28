@@ -1,4 +1,5 @@
 import * as trpc from "@trpc/server"
+import { TRPCError } from "@trpc/server"
 import { z } from 'zod'
 
 import { getAuth, createUserWithEmailAndPassword, User } from "firebase/auth"
@@ -7,6 +8,7 @@ import { fClientApp, fAdminApp } from "@/utils/gcloud/firebase"
 // import { pubSubClient } from "@/utils/gcloud/pubsub"
 
 import event from "@/utils/event/event"
+import { FirebaseError } from "firebase/app"
 
 const fClientAuth = getAuth(fClientApp)
 
@@ -92,7 +94,11 @@ async function createAccount(email: string, username: string, password: string) 
  * 		- Uppercase
  * 		- Number
  */
-const passwordRegex = RegExp('(?=.*[a-z].*)(?=.*[A-Z].*)(.*\\d.*)')
+// const passwordRegex = RegExp('(?=.*[a-z].*)(?=.*[A-Z].*)(.*\\d.*)')
+
+const lowercaseRegex = /(.*[a-z].*)/
+const uppercaseRegex = /(.*[A-Z].*)/
+const numberRegex = /(.*\d.*)/
 
 /**
  * 	Route to create a new User from an `email`, `username`, and `password.
@@ -101,25 +107,47 @@ export const router = trpc.router()
 	.mutation("register", {
 		input: z.object({
 			email: z.string().email(),
-			username: z.string(),
-			password: z.string({
-				invalid_type_error: "Password must contain a lowercase, uppercase, and a number. Password must be between 8 and 100 characters long."
-			}).min(8).max(100).regex(passwordRegex)
+			username: z.string()
+			.min(4, "Username must be 4 or more characters long.")
+			.max(24, "Username must be 24 or less characters long."),
+			password: z.string()
+			.min(8, "Password must be longer than 8 characters long.")
+			.max(100, "Password must be shorter than 100 characters long.")
+			.regex(lowercaseRegex, "Password must contain a lowercase letter.")
+			.regex(uppercaseRegex, "Password must contain an uppercase letter.")
+			.regex(numberRegex, "Password must contain a number.")
 		}),
 		async resolve({ input }) {
 			// Validate the provided `username` and `email` are not in use.
-			const [_usernameTaken, _emailTaken] = await Promise.all([usernameTaken(input.username), emailTaken(input.email)])
+			const [isUsernameTaken, isEmailTaken] = await Promise.all([usernameTaken(input.username), emailTaken(input.email)])
 
-			if (!_usernameTaken && !_emailTaken) {
-				return await createAccount(input.email, input.username, input.password);
+			if (!isUsernameTaken && !isEmailTaken) {
+				try {
+					return await createAccount(input.email, input.username, input.password);
+				} catch (error) {
+					if (error instanceof FirebaseError) {
+						switch (error.code) {
+							case "auth/invalid-email":
+								throw new TRPCError({
+									message: error.code,
+									code: "BAD_REQUEST"
+								});
+							case "auth/email-already-exists":
+								throw new TRPCError({
+									message: error.code,
+									code: "CONFLICT"
+								});
+						}
+					}
+				}
 			} else {
-				// If the username and email are taken, reject the request.
-				const emailError = _emailTaken ? "{email} " : ""
-				const usernameError = _usernameTaken ? "{username}" : ""
+				const errors = []
+				if (isUsernameTaken) errors.push("Username already in use.")
+				if (isEmailTaken) errors.push("Email already in use.")
 
 				throw new trpc.TRPCError({
-					message: `Credentials in use: ${emailError}${usernameError}`,
-					code: "CONFLICT"
+					message: JSON.stringify(errors),
+					code: "CONFLICT",
 				})
 			}
 		}
