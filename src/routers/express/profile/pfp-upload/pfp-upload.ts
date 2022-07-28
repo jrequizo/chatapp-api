@@ -13,16 +13,16 @@ const profilesRef = fAdminApp.firestore().collection("profiles");
 const storage = getStorage();
 const bucket = storage.bucket('chatapp-profile');
 
-interface MulterRequest extends Request {
-    file: any;
-}
-
-export const handler = async (req: MulterRequest, res: Response) => {
+export const handler = async (req: Request, res: Response) => {
 	// Validate the request body jwt
 	const token = req.headers.authorization?.split(" ")[1];
 
 	if (!token) {
 		return res.status(401).end();
+	}
+
+	if (!req.file) {
+		return res.status(400).end();
 	}
 
 	// Convert file from Multer.File
