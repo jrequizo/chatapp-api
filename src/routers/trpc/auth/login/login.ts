@@ -19,8 +19,12 @@ export const router = trpc.router()
 			password: z.string()
 		}),
 		async resolve({ input }) {
+			const { email: _email, password: _password } = input;
+			const email = _email.trim();
+			const password = _password.trim();
+
 			try {
-				let userCredentials = await signInWithEmailAndPassword(auth, input.email, input.password)
+				let userCredentials = await signInWithEmailAndPassword(auth, email, password)
 
 				let jwt = await userCredentials.user.getIdToken()
 				let refreshToken = userCredentials.user.refreshToken

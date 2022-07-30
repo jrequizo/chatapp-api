@@ -118,12 +118,17 @@ export const router = trpc.router()
 			.regex(numberRegex, "Password must contain a number.")
 		}),
 		async resolve({ input }) {
+			const { username: _username, email: _email, password: _password } = input;
+			const username = _username.trim();
+			const email = _email.trim();
+			const password = _password.trim();
+
 			// Validate the provided `username` and `email` are not in use.
-			const [isUsernameTaken, isEmailTaken] = await Promise.all([usernameTaken(input.username), emailTaken(input.email)])
+			const [isUsernameTaken, isEmailTaken] = await Promise.all([usernameTaken(username), emailTaken(email)])
 
 			if (!isUsernameTaken && !isEmailTaken) {
 				try {
-					return await createAccount(input.email, input.username, input.password);
+					return await createAccount(email, username, password);
 				} catch (error) {
 					if (error instanceof FirebaseError) {
 						switch (error.code) {
